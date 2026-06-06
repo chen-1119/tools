@@ -3,13 +3,13 @@ import {
   ArrowRight,
   CheckCircle2,
   ChevronRight,
+  ClipboardList,
   Copyright,
-  ExternalLink,
+  FileCheck2,
   Filter,
-  Github,
   Globe2,
   Inbox,
-  Link as LinkIcon,
+  Layers3,
   Search,
   Send,
   ShieldCheck,
@@ -42,7 +42,7 @@ function App() {
       const matchesPlatform = platform === "all" || tool.platforms.includes(platform);
       const matchesQuery =
         normalizedQuery.length === 0 ||
-        [tool.name, tool.summary, tool.useCase, ...tool.tags]
+        [tool.name, tool.summary, tool.useCase, ...tool.tags, ...tool.bundle]
           .join(" ")
           .toLowerCase()
           .includes(normalizedQuery);
@@ -55,8 +55,8 @@ function App() {
     filteredTools.find((tool) => tool.id === selectedToolId) ?? filteredTools[0] ?? tools[0];
 
   const stats = [
-    { label: "工具样例", value: tools.length.toString() },
-    { label: "合规来源", value: "4 类" },
+    { label: "站内方案", value: tools.length.toString() },
+    { label: "跳转依赖", value: "0" },
     { label: "承接专题", value: articleCampaigns.length.toString() },
   ];
 
@@ -76,14 +76,14 @@ function App() {
           </span>
         </a>
         <nav className="main-nav" aria-label="主导航">
-          <a href="#catalog">工具库</a>
-          <a href="#articles">文章承接</a>
-          <a href="#submit">投稿审核</a>
+          <a href="#catalog">方案库</a>
+          <a href="#articles">承接页</a>
+          <a href="#submit">线索审核</a>
           <a href="#compliance">合规</a>
         </nav>
         <a className="header-action" href="#submit">
           <Send size={16} />
-          投稿
+          提线索
         </a>
       </header>
 
@@ -92,21 +92,21 @@ function App() {
           <div className="hero-copy">
             <p className="eyebrow">
               <ShieldCheck size={16} />
-              软件工具号的合规承接站
+              自有内容库，不做链接集合
             </p>
-            <h1>把公众号里的工具清单，变成可搜索、可审核、可持续更新的网站。</h1>
+            <h1>把软件工具号从“发链接”，升级成“发教程、模板和方案”。</h1>
             <p className="hero-lede">
-              参考资源搜索站和论坛的分类、热词、投稿能力，但保留官方来源、授权说明、版权处理和外链审核。
+              页面不再依赖别人的网站链接。所有卡片都沉淀为站内方案：教程、检查表、模板、FAQ 和风控说明。
             </p>
             <div className="hero-search" role="search">
               <Search size={20} />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="搜索 AI、剪辑、办公、开源工具..."
-                aria-label="搜索工具"
+                placeholder="搜索 AI、办公、剪辑、手机、风控方案..."
+                aria-label="搜索站内方案"
               />
-              <a href="#catalog">查看结果</a>
+              <a href="#catalog">查看方案</a>
             </div>
             <div className="hero-stats" aria-label="站点数据">
               {stats.map((stat) => (
@@ -118,31 +118,31 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-visual" aria-label="工具站仪表盘预览">
+          <div className="hero-visual" aria-label="站内内容工作台预览">
             <div className="visual-topbar">
               <span />
               <span />
               <span />
-              <strong>审核工作台</strong>
+              <strong>内容工作台</strong>
             </div>
             <div className="visual-grid">
               <div className="visual-panel visual-panel-dark">
-                <span className="panel-label">今日热词</span>
-                <b>AI 助手</b>
-                <b>手机办公</b>
-                <b>图片编辑</b>
+                <span className="panel-label">今日选题</span>
+                <b>AI 教程包</b>
+                <b>办公模板</b>
+                <b>发布检查表</b>
               </div>
               <div className="visual-panel">
-                <span className="panel-label">外链状态</span>
-                <div className="meter"><i style={{ width: "78%" }} /></div>
-                <small>7 个官方入口待复核</small>
+                <span className="panel-label">站内资产</span>
+                <div className="meter"><i style={{ width: "84%" }} /></div>
+                <small>12 个模板和清单可复用</small>
               </div>
               <div className="visual-panel visual-panel-wide">
-                <span className="panel-label">文章承接</span>
+                <span className="panel-label">承接结构</span>
                 <div className="mini-list">
-                  <span>公众号合集</span>
-                  <span>专题页</span>
-                  <span>版权入口</span>
+                  <span>公众号入口</span>
+                  <span>专题方案</span>
+                  <span>风控改写</span>
                 </div>
               </div>
             </div>
@@ -153,13 +153,13 @@ function App() {
           <div className="section-heading">
             <p className="eyebrow">
               <Filter size={16} />
-              资源目录
+              站内方案目录
             </p>
-            <h2>工具库 MVP</h2>
-            <p>工具内容先以配置文件维护，后续可接后台、审核流和 SEO 独立页。</p>
+            <h2>用自己的内容承接用户</h2>
+            <p>每张卡片都是可持续更新的站内内容包，不把用户直接导向第三方网站。</p>
           </div>
 
-          <div className="filters" aria-label="工具筛选">
+          <div className="filters" aria-label="方案筛选">
             <div className="segmented">
               {categories.map((item) => (
                 <button
@@ -196,6 +196,7 @@ function App() {
                 return (
                   <article
                     className={`tool-card ${selectedTool.id === tool.id ? "is-selected" : ""}`}
+                    id={tool.slug}
                     key={tool.id}
                   >
                     <div className="tool-card-header">
@@ -212,7 +213,7 @@ function App() {
                       ))}
                     </div>
                     <button type="button" onClick={() => setSelectedToolId(tool.id)}>
-                      查看审核信息
+                      查看站内方案
                       <ChevronRight size={16} />
                     </button>
                   </article>
@@ -220,16 +221,16 @@ function App() {
               })}
             </div>
 
-            <aside className="detail-panel" aria-label="工具详情">
+            <aside className="detail-panel" aria-label="方案详情">
               <div className="detail-kicker">
                 <Star size={17} />
-                当前选中
+                当前方案
               </div>
               <h3>{selectedTool.name}</h3>
               <p>{selectedTool.useCase}</p>
               <dl>
                 <div>
-                  <dt>授权</dt>
+                  <dt>内容属性</dt>
                   <dd>{selectedTool.license}</dd>
                 </div>
                 <div>
@@ -241,13 +242,24 @@ function App() {
                   <dd>{selectedTool.platforms.join(" / ")}</dd>
                 </div>
               </dl>
+              <div className="bundle-block">
+                <strong>
+                  <Layers3 size={17} />
+                  内容包
+                </strong>
+                <ul>
+                  {selectedTool.bundle.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
               <div className="compliance-note">
                 <ShieldCheck size={18} />
                 <span>{selectedTool.complianceNote}</span>
               </div>
-              <a href={selectedTool.href} target="_blank" rel="noreferrer">
-                打开官方来源
-                <ExternalLink size={16} />
+              <a href="#submit">
+                加入选题单
+                <ArrowRight size={16} />
               </a>
             </aside>
           </div>
@@ -256,11 +268,11 @@ function App() {
         <section className="section" id="articles">
           <div className="section-heading">
             <p className="eyebrow">
-              <LinkIcon size={16} />
-              文章承接
+              <ClipboardList size={16} />
+              承接页优化
             </p>
-            <h2>公众号文章进站后的承接结构</h2>
-            <p>每篇文章都可以对应一个专题页，站内负责更新、筛选、下架和跳转。</p>
+            <h2>公众号文章进站后，只走自己的内容资产。</h2>
+            <p>文章、短视频和评论区都引导到站内专题，用户看到的是教程、模板和流程，不是第三方链接列表。</p>
           </div>
           <div className="campaign-grid">
             {articleCampaigns.map((campaign) => (
@@ -273,8 +285,8 @@ function App() {
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
-                <a href={campaign.sourceUrl}>
-                  查看入口
+                <a href={campaign.target}>
+                  查看站内入口
                   <ArrowRight size={16} />
                 </a>
               </article>
@@ -286,11 +298,11 @@ function App() {
           <div>
             <p className="eyebrow">
               <Inbox size={16} />
-              投稿审核
+              线索审核
             </p>
-            <h2>把“发资源”改成“提交工具线索”。</h2>
+            <h2>把“给链接”改成“给选题线索”。</h2>
             <p>
-              表单只收集官网、作者页、开源仓库或应用商店链接。运营人员审核授权、描述、风险词和跳转地址后再上架。
+              用户可以提交需求、场景和问题。编辑审核后，把它改写成站内教程、模板、检查表或 FAQ，不直接展示外部下载地址。
             </p>
             <div className="channel-list">
               {distributionChannels.map((channel) => {
@@ -312,38 +324,44 @@ function App() {
 
           <form className="submit-form" onSubmit={handleSubmit}>
             <label>
-              工具名称
-              <input required placeholder="例如 LocalSend" />
+              需求标题
+              <input required placeholder="例如：手机电脑怎么快速互传文件" />
             </label>
             <label>
-              官方来源链接
-              <input required type="url" placeholder="https://example.com" />
-            </label>
-            <label>
-              来源类型
-              <select defaultValue="官网">
-                <option>官网</option>
-                <option>GitHub</option>
-                <option>应用商店</option>
-                <option>作者投稿</option>
+              使用场景
+              <select defaultValue="办公效率">
+                <option>办公效率</option>
+                <option>AI 方案</option>
+                <option>短视频创作</option>
+                <option>开发调试</option>
+                <option>安全隐私</option>
               </select>
             </label>
             <label>
-              授权与风险说明
-              <textarea placeholder="说明是否免费、开源、试用或商业授权。" rows={4} />
+              希望得到什么内容
+              <select defaultValue="教程步骤">
+                <option>教程步骤</option>
+                <option>模板清单</option>
+                <option>避坑指南</option>
+                <option>FAQ 问答</option>
+              </select>
+            </label>
+            <label>
+              需求描述
+              <textarea placeholder="写清楚你想解决的问题、使用平台和遇到的限制。" rows={4} />
             </label>
             <label className="checkline">
               <input required type="checkbox" />
-              <span>我确认该链接不包含破解、绕过会员、侵权文件或恶意软件。</span>
+              <span>我确认不提交网盘、破解、会员绕过、未知安装包或侵权素材地址。</span>
             </label>
             <button type="submit">
               <Send size={16} />
-              提交审核
+              提交线索
             </button>
             {submitted && (
               <p className="form-success">
                 <CheckCircle2 size={16} />
-                已记录前端提交状态；接入后端后可写入审核队列。
+                已记录线索状态；接入后端后可进入编辑审核队列。
               </p>
             )}
           </form>
@@ -355,8 +373,8 @@ function App() {
               <Copyright size={16} />
               合规边界
             </p>
-            <h2>让平台更容易放行的站点规则</h2>
-            <p>默认展示正版权益、官方来源和下架流程，弱化“网盘资源”表达。</p>
+            <h2>平台更容易接受的是内容资产，不是资源跳转。</h2>
+            <p>站点默认展示原创教程、模板、流程和检查表，弱化“网盘资源”和“下载地址”表达。</p>
           </div>
           <div className="compliance-grid">
             {complianceRules.map((rule) => {
@@ -375,14 +393,14 @@ function App() {
 
       <footer className="site-footer">
         <span>Tools Hub</span>
-        <span>仅做工具导航和教程索引，不托管第三方文件。</span>
-        <a href="mailto:copyright@example.com">
+        <span>只沉淀站内教程、模板和清单，不托管第三方文件。</span>
+        <a href="#compliance">
           <Globe2 size={16} />
-          版权与合作
+          版权与合规
         </a>
-        <a href="https://github.com/" target="_blank" rel="noreferrer">
-          <Github size={16} />
-          Git 仓库
+        <a href="#articles">
+          <FileCheck2 size={16} />
+          内容资产
         </a>
       </footer>
     </div>

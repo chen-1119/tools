@@ -590,6 +590,30 @@ h3 {
   color: var(--green);
 }
 
+.bundle-block {
+  margin: 0 0 16px;
+  border: 1px solid rgba(49, 95, 134, 0.24);
+  background: rgba(49, 95, 134, 0.07);
+  padding: 14px;
+}
+
+.bundle-block strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--blue);
+}
+
+.bundle-block ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: #465255;
+  line-height: 1.55;
+}
+
 .detail-panel > a,
 .campaign-card a,
 .submit-form button {
