@@ -22,3 +22,13 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## 线上部署
+
+仓库推送到 `chen-1119/tools` 后，GitHub Actions 会构建并发布到 GitHub Pages。
+
+默认访问地址：
+
+```text
+https://chen-1119.github.io/tools/
+```
