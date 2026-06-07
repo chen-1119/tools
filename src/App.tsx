@@ -10,6 +10,7 @@ import {
   Globe2,
   Inbox,
   Layers3,
+  ListChecks,
   Search,
   Send,
   ShieldCheck,
@@ -24,7 +25,9 @@ import {
   complianceRules,
   distributionChannels,
   platforms,
+  riskRules,
   tools,
+  workflowStages,
 } from "./data/catalog";
 
 function App() {
@@ -33,6 +36,9 @@ function App() {
   const [platform, setPlatform] = useState<PlatformKey>("all");
   const [selectedToolId, setSelectedToolId] = useState(tools[0].id);
   const [submitted, setSubmitted] = useState(false);
+  const [draftCopy, setDraftCopy] = useState(
+    "分享一个办公软件永久版下载地址，网盘里有绿色版，适合想去广告的朋友。",
+  );
 
   const filteredTools = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -60,6 +66,12 @@ function App() {
     { label: "承接专题", value: articleCampaigns.length.toString() },
   ];
 
+  const matchedRiskRules = riskRules.filter((rule) => draftCopy.includes(rule.keyword));
+  const rewrittenCopy = riskRules.reduce(
+    (text, rule) => text.split(rule.keyword).join(rule.replacement),
+    draftCopy,
+  );
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitted(true);
@@ -77,9 +89,9 @@ function App() {
         </a>
         <nav className="main-nav" aria-label="主导航">
           <a href="#catalog">方案库</a>
+          <a href="#rewrite">改写器</a>
           <a href="#articles">承接页</a>
           <a href="#submit">线索审核</a>
-          <a href="#compliance">合规</a>
         </nav>
         <a className="header-action" href="#submit">
           <Send size={16} />
@@ -253,6 +265,17 @@ function App() {
                   ))}
                 </ul>
               </div>
+              <div className="bundle-block checklist-block">
+                <strong>
+                  <ListChecks size={17} />
+                  上线检查
+                </strong>
+                <ul>
+                  {selectedTool.checklist.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
               <div className="compliance-note">
                 <ShieldCheck size={18} />
                 <span>{selectedTool.complianceNote}</span>
@@ -262,6 +285,71 @@ function App() {
                 <ArrowRight size={16} />
               </a>
             </aside>
+          </div>
+        </section>
+
+        <section className="section rewrite-section" id="rewrite">
+          <div className="section-heading">
+            <p className="eyebrow">
+              <FileCheck2 size={16} />
+              平台风控改写器
+            </p>
+            <h2>把高风险资源话术，改成可发布的内容话术。</h2>
+            <p>这里不生成下载地址，只帮你把表达转成教程、清单、模板和方法论，更适合公众号、视频号和小红书承接。</p>
+          </div>
+
+          <div className="rewrite-layout">
+            <div className="rewrite-input">
+              <label htmlFor="copy-draft">待发布文案</label>
+              <textarea
+                id="copy-draft"
+                value={draftCopy}
+                onChange={(event) => setDraftCopy(event.target.value)}
+                rows={7}
+              />
+              <div className="risk-summary">
+                <strong>{matchedRiskRules.length}</strong>
+                <span>个风险表达命中</span>
+              </div>
+            </div>
+
+            <div className="rewrite-output">
+              <span className="panel-label">建议改写结果</span>
+              <p>{rewrittenCopy || "输入文案后，这里会生成更稳妥的站内内容表达。"}</p>
+              <div className="rewrite-rules">
+                {matchedRiskRules.length === 0 ? (
+                  <article>
+                    <CheckCircle2 size={18} />
+                    <div>
+                      <strong>未命中高风险词</strong>
+                      <span>当前表达更适合沉淀为站内内容。</span>
+                    </div>
+                  </article>
+                ) : (
+                  matchedRiskRules.map((rule) => (
+                    <article key={rule.keyword}>
+                      <ShieldCheck size={18} />
+                      <div>
+                        <strong>
+                          {rule.keyword} → {rule.replacement}
+                        </strong>
+                        <span>{rule.reason}</span>
+                      </div>
+                    </article>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="workflow-strip" aria-label="内容生产流程">
+            {workflowStages.map((stage) => (
+              <article key={stage.title}>
+                <span>{stage.metric}</span>
+                <h3>{stage.title}</h3>
+                <p>{stage.text}</p>
+              </article>
+            ))}
           </div>
         </section>
 

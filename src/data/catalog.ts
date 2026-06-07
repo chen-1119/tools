@@ -50,6 +50,18 @@ export type ToolItem = {
   icon: LucideIcon;
 };
 
+export type RiskRule = {
+  keyword: string;
+  replacement: string;
+  reason: string;
+};
+
+export type WorkflowStage = {
+  title: string;
+  text: string;
+  metric: string;
+};
+
 export const categories: Array<{ key: CategoryKey; label: string; countLabel: string }> = [
   { key: "all", label: "全部", countLabel: "内容库" },
   { key: "ai", label: "AI 方案", countLabel: "教程+清单" },
@@ -246,6 +258,67 @@ export const articleCampaigns = [
     target: "#compliance",
     description: "把“资源下载”改写成“教程、清单、模板、方法”，降低平台风险。",
     tags: ["风控", "改写", "运营"],
+  },
+];
+
+export const riskRules: RiskRule[] = [
+  {
+    keyword: "破解",
+    replacement: "使用教程",
+    reason: "弱化侵权和绕过授权含义，转成方法说明。",
+  },
+  {
+    keyword: "网盘",
+    replacement: "站内清单",
+    reason: "避免被识别为资源分发或文件搬运。",
+  },
+  {
+    keyword: "下载地址",
+    replacement: "操作步骤",
+    reason: "把用户注意力从拿文件转到学流程。",
+  },
+  {
+    keyword: "会员",
+    replacement: "功能对比",
+    reason: "避免暗示绕过付费权益，改成客观说明。",
+  },
+  {
+    keyword: "去广告",
+    replacement: "干净使用体验",
+    reason: "避免绕过平台商业模式的表达。",
+  },
+  {
+    keyword: "永久版",
+    replacement: "长期维护版教程",
+    reason: "降低盗版软件联想，强调内容更新。",
+  },
+  {
+    keyword: "绿色版",
+    replacement: "轻量部署说明",
+    reason: "避免未知安装包和安全风险联想。",
+  },
+];
+
+export const workflowStages: WorkflowStage[] = [
+  {
+    title: "收集需求",
+    text: "从公众号评论、私信和视频弹幕里提炼用户真实问题。",
+    metric: "输入",
+  },
+  {
+    title: "风控改写",
+    text: "把资源词、下载词和绕过词改成教程、模板、清单表达。",
+    metric: "过滤",
+  },
+  {
+    title: "生成专题",
+    text: "每个选题沉淀为站内专题页，包含步骤、检查表和 FAQ。",
+    metric: "沉淀",
+  },
+  {
+    title: "持续更新",
+    text: "按平台反馈更新内容，保留版本日期、风险提示和下架入口。",
+    metric: "运营",
   },
 ];
 
