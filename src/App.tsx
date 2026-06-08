@@ -4,16 +4,20 @@ import {
   CheckCircle2,
   ClipboardList,
   Copyright,
+  Database,
   ExternalLink,
   FileArchive,
   Filter,
   Inbox,
   Link as LinkIcon,
+  LogIn,
+  LogOut,
   Search,
   Send,
   ShieldCheck,
   SlidersHorizontal,
   Star,
+  UserCircle,
 } from "lucide-react";
 import {
   ArticleCategoryKey,
@@ -26,6 +30,50 @@ import {
   syncPipeline,
   syncedArticles,
 } from "./data/catalog";
+
+type AuthUser = {
+  name: string;
+  role: "管理员";
+};
+
+type SubmissionRecord = {
+  id: string;
+  title: string;
+  sourceUrl: string;
+  softwareName: string;
+  category: string;
+  resourceUrl: string;
+  note: string;
+  status: "待审核";
+  submitter: string;
+  submittedAt: string;
+};
+
+const AUTH_STORAGE_KEY = "tools-hub-auth-user";
+const SUBMISSIONS_STORAGE_KEY = "tools-hub-submissions";
+const DEMO_USERNAME = "admin";
+const DEMO_PASSWORD = "tools123";
+
+function readStoredJson<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function createRecordId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+
+  return `record-${Date.now()}`;
+}
 
 function getLinkLabel(resource: DiskResource) {
   if (resource.cta) {
@@ -65,6 +113,13 @@ function App() {
   const [resourceType, setResourceType] = useState<ResourceType | "全部">("全部");
   const [selectedArticleId, setSelectedArticleId] = useState(syncedArticles[0].id);
   const [submitted, setSubmitted] = useState(false);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(() =>
+    readStoredJson<AuthUser | null>(AUTH_STORAGE_KEY, null),
+  );
+  const [loginError, setLoginError] = useState("");
+  const [submissions, setSubmissions] = useState<SubmissionRecord[]>(() =>
+    readStoredJson<SubmissionRecord[]>(SUBMISSIONS_STORAGE_KEY, []),
+  );
 
   const filteredArticles = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -114,8 +169,62 @@ function App() {
     })),
   );
 
+  function saveSubmissions(nextSubmissions: SubmissionRecord[]) {
+    setSubmissions(nextSubmissions);
+    window.localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(nextSubmissions));
+  }
+
+  function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const username = String(formData.get("username") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    if (username !== DEMO_USERNAME || password !== DEMO_PASSWORD) {
+      setLoginError("账号或密码不正确。演示账号：admin，密码：tools123");
+      return;
+    }
+
+    const nextUser: AuthUser = { name: "内容管理员", role: "管理员" };
+    setAuthUser(nextUser);
+    setLoginError("");
+    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextUser));
+  }
+
+  function handleLogout() {
+    setAuthUser(null);
+    setSubmitted(false);
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!authUser) {
+      setLoginError("请先登录后再提交内容。");
+      return;
+    }
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const categoryKey = String(formData.get("category") ?? "ai") as ArticleCategoryKey;
+    const categoryLabel =
+      articleCategories.find((item) => item.key === categoryKey)?.label ?? "未分类";
+    const nextRecord: SubmissionRecord = {
+      id: createRecordId(),
+      title: String(formData.get("title") ?? "").trim(),
+      sourceUrl: String(formData.get("sourceUrl") ?? "").trim(),
+      softwareName: String(formData.get("softwareName") ?? "").trim(),
+      category: categoryLabel,
+      resourceUrl: String(formData.get("resourceUrl") ?? "").trim(),
+      note: String(formData.get("note") ?? "").trim(),
+      status: "待审核",
+      submitter: authUser.name,
+      submittedAt: new Date().toLocaleString("zh-CN", { hour12: false }),
+    };
+
+    saveSubmissions([nextRecord, ...submissions]);
+    form.reset();
     setSubmitted(true);
   }
 
@@ -135,10 +244,18 @@ function App() {
           <a href="#resources">网盘链接</a>
           <a href="#sync">提交内容</a>
         </nav>
-        <a className="header-action" href="#sync">
-          <Send size={16} />
-          提交内容
-        </a>
+        {authUser ? (
+          <button className="header-action user-action" onClick={handleLogout} type="button">
+            <UserCircle size={16} />
+            {authUser.name}
+            <LogOut size={15} />
+          </button>
+        ) : (
+          <a className="header-action" href="#sync">
+            <LogIn size={16} />
+            登录提交
+          </a>
+        )}
       </header>
 
       <main id="top">
@@ -425,64 +542,136 @@ function App() {
           </div>
 
           <div className="sync-layout">
-            <form className="submit-form" onSubmit={handleSubmit}>
-              <label>
-                文章标题
-                <input required placeholder="例如：安卓手机这几个日用工具..." />
-              </label>
-              <label>
-                来源链接
-                <input placeholder="可选，填论坛、博客、官网、社群文章等来源链接" />
-              </label>
-              <label>
-                软件名称
-                <input placeholder="例如：本地 AI 助手 / 安卓截图工具 / 剪辑工具" />
-              </label>
-              <label>
-                文章分类
-                <select defaultValue="ai">
-                  {articleCategories.slice(1).map((item) => (
-                    <option value={item.key} key={item.key}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                软件链接或网盘链接
-                <input placeholder="官网、夸克网盘、百度云、备用链接都可填" />
-              </label>
-              <label>
-                提取码或备注
-                <textarea placeholder="说明链接类型、软件版本、授权来源、提取码或备用说明。" rows={4} />
-              </label>
-              <label className="checkline">
-                <input required type="checkbox" />
-                <span>我确认软件链接来源清楚，不包含破解、侵权、绕过会员或未知来源安装包。</span>
-              </label>
-              <button type="submit">
-                <Send size={16} />
-                保存内容草稿
-              </button>
-              {submitted && (
-                <p className="form-success">
-                  <CheckCircle2 size={16} />
-                  已记录前端草稿状态；接入后台后可写入内容发布队列。
-                </p>
-              )}
-            </form>
+            {authUser ? (
+              <form className="submit-form" onSubmit={handleSubmit}>
+                <div className="form-user-row">
+                  <span>
+                    <UserCircle size={17} />
+                    {authUser.name}
+                  </span>
+                  <button className="text-button" onClick={handleLogout} type="button">
+                    退出登录
+                  </button>
+                </div>
+                <label>
+                  文章标题
+                  <input name="title" required placeholder="例如：安卓手机这几个日用工具..." />
+                </label>
+                <label>
+                  来源链接
+                  <input name="sourceUrl" placeholder="可选，填论坛、博客、官网、社群文章等来源链接" />
+                </label>
+                <label>
+                  软件名称
+                  <input name="softwareName" required placeholder="例如：本地 AI 助手 / 安卓截图工具 / 剪辑工具" />
+                </label>
+                <label>
+                  文章分类
+                  <select defaultValue="ai" name="category">
+                    {articleCategories.slice(1).map((item) => (
+                      <option value={item.key} key={item.key}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  软件链接或网盘链接
+                  <input name="resourceUrl" required placeholder="官网、夸克网盘、百度云、备用链接都可填" />
+                </label>
+                <label>
+                  提取码或备注
+                  <textarea
+                    name="note"
+                    placeholder="说明链接类型、软件版本、授权来源、提取码或备用说明。"
+                    rows={4}
+                  />
+                </label>
+                <label className="checkline">
+                  <input required type="checkbox" />
+                  <span>我确认软件链接来源清楚，不包含破解、侵权、绕过会员或未知来源安装包。</span>
+                </label>
+                <button type="submit">
+                  <Send size={16} />
+                  保存并记录
+                </button>
+                {submitted && (
+                  <p className="form-success">
+                    <CheckCircle2 size={16} />
+                    已保存到本地提交记录，状态为待审核。
+                  </p>
+                )}
+              </form>
+            ) : (
+              <form className="submit-form login-form" onSubmit={handleLogin}>
+                <div className="login-lock">
+                  <LogIn size={24} />
+                  <div>
+                    <h3>登录后提交内容</h3>
+                    <p>当前是静态站点演示登录，记录会保存到本机浏览器。</p>
+                  </div>
+                </div>
+                <label>
+                  账号
+                  <input autoComplete="username" name="username" placeholder="admin" required />
+                </label>
+                <label>
+                  密码
+                  <input autoComplete="current-password" name="password" placeholder="tools123" required type="password" />
+                </label>
+                <button type="submit">
+                  <LogIn size={16} />
+                  登录
+                </button>
+                <p className="demo-account">演示账号：admin / tools123</p>
+                {loginError && <p className="form-error">{loginError}</p>}
+              </form>
+            )}
 
-            <div className="workflow-strip sync-steps" aria-label="发布流程">
-              {syncPipeline.map((stage) => {
-                const Icon = stage.icon;
-                return (
-                  <article key={stage.title}>
-                    <Icon size={22} />
-                    <h3>{stage.title}</h3>
-                    <p>{stage.text}</p>
-                  </article>
-                );
-              })}
+            <div className="submission-panel">
+              <div className="submission-heading">
+                <span>
+                  <Database size={18} />
+                  提交记录
+                </span>
+                <strong>{submissions.length} 条</strong>
+              </div>
+              {submissions.length > 0 ? (
+                <div className="submission-list">
+                  {submissions.map((record) => (
+                    <article key={record.id}>
+                      <div className="article-meta">
+                        <span>{record.category}</span>
+                        <span>{record.submittedAt}</span>
+                        <strong>{record.status}</strong>
+                      </div>
+                      <h3>{record.title}</h3>
+                      <p>{record.softwareName}</p>
+                      <small>{record.resourceUrl}</small>
+                      {record.note && <small>{record.note}</small>}
+                      <span className="submitter">提交人：{record.submitter}</span>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-records">
+                  <Database size={22} />
+                  <p>暂无提交记录。登录后提交一条软件文章，会显示在这里。</p>
+                </div>
+              )}
+
+              <div className="workflow-strip sync-steps compact" aria-label="发布流程">
+                {syncPipeline.map((stage) => {
+                  const Icon = stage.icon;
+                  return (
+                    <article key={stage.title}>
+                      <Icon size={20} />
+                      <h3>{stage.title}</h3>
+                      <p>{stage.text}</p>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
