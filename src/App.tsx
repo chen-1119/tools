@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import {
   ArticleCategoryKey,
+  DiskResource,
   ResourceType,
   articleCategories,
   complianceRules,
@@ -25,6 +26,38 @@ import {
   syncPipeline,
   syncedArticles,
 } from "./data/catalog";
+
+function getLinkLabel(resource: DiskResource) {
+  if (resource.cta) {
+    return resource.cta;
+  }
+
+  if (resource.status !== "可领取") {
+    return resource.status === "审核中" ? "审核中" : "待上线";
+  }
+
+  if (resource.type === "软件官网") {
+    return "打开入口";
+  }
+
+  if (resource.type === "网盘下载") {
+    return "领取网盘";
+  }
+
+  if (resource.type === "教程附件") {
+    return "查看附件";
+  }
+
+  if (resource.type === "配置文件") {
+    return "领取配置";
+  }
+
+  return "领取资料";
+}
+
+function getLinkTarget(url: string) {
+  return url.startsWith("#") ? {} : { target: "_blank", rel: "noreferrer" };
+}
 
 function App() {
   const [query, setQuery] = useState("");
@@ -230,14 +263,19 @@ function App() {
                       </span>
                       <h3>{article.title}</h3>
                     </div>
+                    <small className="wechat-line">公众号原文：{article.wechatTitle}</small>
                     <p>{article.summary}</p>
+                    <div className="article-quick-info" aria-label="文章信息">
+                      <span>{article.readTime}</span>
+                      <span>{article.resources.length} 个软件链接</span>
+                    </div>
                     <div className="tag-row">
                       {article.tags.map((tag) => (
                         <span key={tag}>{tag}</span>
                       ))}
                     </div>
                     <button type="button" onClick={() => setSelectedArticleId(article.id)}>
-                      查看文章和资料
+                      查看文章和链接
                       <ArrowRight size={16} />
                     </button>
                   </article>
@@ -285,7 +323,10 @@ function App() {
                   软件链接
                 </strong>
                 {selectedArticle.resources.map((resource) => (
-                  <article key={resource.id}>
+                  <article
+                    className={`resource-item ${resource.status === "可领取" ? "is-ready" : "is-pending"}`}
+                    key={resource.id}
+                  >
                     <div>
                       <span>{resource.provider}</span>
                       <h4>{resource.title}</h4>
@@ -296,13 +337,13 @@ function App() {
                       <small>{resource.note}</small>
                     </div>
                     {resource.url ? (
-                      <a href={resource.url} target="_blank" rel="noreferrer">
-                        打开
+                      <a href={resource.url} {...getLinkTarget(resource.url)}>
+                        {getLinkLabel(resource)}
                         <ExternalLink size={14} />
                       </a>
                     ) : (
                       <button type="button" disabled>
-                        待配置
+                        {getLinkLabel(resource)}
                       </button>
                     )}
                   </article>
@@ -345,7 +386,10 @@ function App() {
 
           <div className="software-grid">
             {softwareLinks.map((link) => (
-              <article key={`${link.articleTitle}-${link.id}`}>
+              <article
+                className={`software-card ${link.status === "可领取" ? "is-ready" : "is-pending"}`}
+                key={`${link.articleTitle}-${link.id}`}
+              >
                 <div className="article-meta">
                   <span>{link.provider}</span>
                   <span>{link.type}</span>
@@ -353,15 +397,16 @@ function App() {
                 </div>
                 <h3>{link.title}</h3>
                 <p>{link.articleTitle}</p>
+                {link.code && <span className="link-code">提取码：{link.code}</span>}
                 <small>{link.note}</small>
                 {link.url ? (
-                  <a href={link.url} target="_blank" rel="noreferrer">
-                    打开链接
+                  <a href={link.url} {...getLinkTarget(link.url)}>
+                    {getLinkLabel(link)}
                     <ExternalLink size={14} />
                   </a>
                 ) : (
                   <button type="button" disabled>
-                    待配置
+                    {getLinkLabel(link)}
                   </button>
                 )}
               </article>

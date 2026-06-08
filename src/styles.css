@@ -545,6 +545,33 @@ h3 {
   line-height: 1.75;
 }
 
+.wechat-line {
+  display: block;
+  margin: -2px 0 10px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.article-quick-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.article-quick-info span,
+.link-code {
+  width: fit-content;
+  border: 1px solid rgba(199, 125, 27, 0.28);
+  background: rgba(199, 125, 27, 0.1);
+  color: #7b4a11;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .article-card button {
   display: inline-flex;
   align-items: center;
@@ -785,6 +812,21 @@ h3 {
   padding: 12px;
 }
 
+.resource-stack article.is-ready,
+.software-grid article.is-ready {
+  border-color: rgba(49, 107, 69, 0.34);
+  background:
+    linear-gradient(180deg, rgba(49, 107, 69, 0.06), transparent 56%),
+    var(--paper);
+}
+
+.resource-stack article.is-pending,
+.software-grid article.is-pending {
+  background:
+    linear-gradient(180deg, rgba(105, 113, 116, 0.08), transparent 62%),
+    var(--paper);
+}
+
 .resource-stack h4 {
   margin: 6px 0;
   font-size: 16px;
@@ -903,6 +945,11 @@ h3 {
 .software-grid small {
   display: block;
   margin-bottom: 18px;
+}
+
+.link-code {
+  display: inline-flex;
+  margin-bottom: 10px;
 }
 
 .software-grid a,
