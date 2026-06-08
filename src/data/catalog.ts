@@ -29,9 +29,7 @@ export type ArticleCategoryKey =
 export type DiskProvider =
   | "官网入口"
   | "夸克网盘"
-  | "百度网盘"
-  | "阿里云盘"
-  | "123网盘"
+  | "百度云"
   | "备用链接"
   | "待配置";
 
@@ -61,9 +59,9 @@ export type SyncedArticle = {
   slug: string;
   title: string;
   category: Exclude<ArticleCategoryKey, "all">;
-  source: "公众号同步" | "手动录入" | "草稿";
+  source: "站内整理" | "外部来源" | "手动录入" | "草稿";
   publishDate: string;
-  status: "已同步" | "待补资料" | "草稿";
+  status: "已发布" | "待补资料" | "草稿";
   summary: string;
   tags: string[];
   readTime: string;
@@ -93,10 +91,10 @@ export const syncedArticles: SyncedArticle[] = [
     slug: "ai-local-starter",
     title: "本地 AI 助手入门：电脑离线也能用的软件方案",
     category: "ai",
-    source: "公众号同步",
+    source: "站内整理",
     publishDate: "2026-06-08",
-    status: "已同步",
-    summary: "从安装准备、模型选择、常见报错到软件入口，把公众号文章同步成可检索的软件说明页。",
+    status: "已发布",
+    summary: "从安装准备、模型选择、常见报错到软件入口，把一篇工具教程整理成可检索的软件说明页。",
     tags: ["AI", "本地部署", "新手教程"],
     readTime: "6 分钟",
     wechatTitle: "电脑离线 AI 助手怎么搭？这套流程够新手用了",
@@ -128,7 +126,7 @@ export const syncedArticles: SyncedArticle[] = [
       {
         id: 103,
         title: "常见报错排查表",
-        provider: "百度网盘",
+        provider: "百度云",
         type: "教程附件",
         size: "62 KB",
         status: "可领取",
@@ -145,14 +143,14 @@ export const syncedArticles: SyncedArticle[] = [
     slug: "office-file-kit",
     title: "办公文件整理工具箱：文章说明 + 软件链接",
     category: "office",
-    source: "公众号同步",
+    source: "站内整理",
     publishDate: "2026-06-07",
-    status: "已同步",
-    summary: "把公众号里的办公效率文章拆成软件说明、使用场景、模板和链接位。",
+    status: "已发布",
+    summary: "把办公效率内容拆成软件说明、使用场景、模板和百度云/夸克网盘链接位。",
     tags: ["办公", "文件整理", "模板"],
     readTime: "5 分钟",
     wechatTitle: "文件越存越乱？这套命名和归档方法直接照做",
-    sections: ["软件用途", "文件夹结构", "同步习惯", "软件/模板链接"],
+    sections: ["软件用途", "文件夹结构", "归档习惯", "软件/模板链接"],
     resources: [
       {
         id: 201,
@@ -168,7 +166,7 @@ export const syncedArticles: SyncedArticle[] = [
       {
         id: 202,
         title: "文件命名模板表",
-        provider: "阿里云盘",
+        provider: "百度云",
         type: "素材模板",
         size: "24 KB",
         status: "可领取",
@@ -185,10 +183,10 @@ export const syncedArticles: SyncedArticle[] = [
     slug: "android-daily-tools",
     title: "安卓日用工具合集：截图、传输、清理和备份",
     category: "android",
-    source: "公众号同步",
+    source: "外部来源",
     publishDate: "2026-06-06",
     status: "待补资料",
-    summary: "适合软件工具号常见的安卓工具文章，站内按用途分类，并给每个软件预留官网和网盘链接。",
+    summary: "适合工具站常见的安卓软件合集，站内按用途分类，并给每个软件预留官网和网盘链接。",
     tags: ["安卓", "手机效率", "备份"],
     readTime: "7 分钟",
     wechatTitle: "安卓手机这几个日用工具，能省下很多重复操作",
@@ -210,7 +208,7 @@ export const syncedArticles: SyncedArticle[] = [
         type: "备用链接",
         size: "待填写",
         status: "待补链",
-        note: "主链接失效时使用，需同步审核。",
+        note: "主链接失效时使用，需重新审核。",
       },
     ],
     icon: Smartphone,
@@ -220,9 +218,9 @@ export const syncedArticles: SyncedArticle[] = [
     slug: "short-video-assets",
     title: "短视频封面和字幕工具：文章教程和软件下载位",
     category: "media",
-    source: "公众号同步",
+    source: "站内整理",
     publishDate: "2026-06-05",
-    status: "已同步",
+    status: "已发布",
     summary: "文章讲清楚剪辑和封面流程，软件链接区放工具入口、网盘下载和模板包。",
     tags: ["短视频", "封面", "字幕"],
     readTime: "5 分钟",
@@ -232,7 +230,7 @@ export const syncedArticles: SyncedArticle[] = [
       {
         id: 401,
         title: "封面模板网盘包",
-        provider: "123网盘",
+        provider: "百度云",
         type: "素材模板",
         size: "1.8 MB",
         status: "可领取",
@@ -263,7 +261,7 @@ export const syncedArticles: SyncedArticle[] = [
     source: "手动录入",
     publishDate: "2026-06-04",
     status: "草稿",
-    summary: "给技术读者准备的文章模板，适合后续同步到公众号再回流到网站。",
+    summary: "给技术读者准备的工具文章模板，适合沉淀到网站后再分发到不同平台。",
     tags: ["开发者", "接口调试", "配置"],
     readTime: "8 分钟",
     wechatTitle: "开发者常用工具怎么整理？先把配置和文档管起来",
@@ -298,20 +296,20 @@ export const syncedArticles: SyncedArticle[] = [
   {
     id: 6,
     slug: "wechat-template-library",
-    title: "软件工具号文章模板库：标题、结构和链接卡片",
+    title: "软件工具文章模板库：标题、结构和链接卡片",
     category: "templates",
-    source: "公众号同步",
+    source: "站内整理",
     publishDate: "2026-06-03",
-    status: "已同步",
-    summary: "用于承接公众号文章的模板库，包含标题结构、正文模块、软件链接卡片和分类规范。",
-    tags: ["公众号", "模板", "选题"],
+    status: "已发布",
+    summary: "用于承接软件教程和工具文章的模板库，包含标题结构、正文模块、软件链接卡片和分类规范。",
+    tags: ["工具文章", "模板", "选题"],
     readTime: "4 分钟",
-    wechatTitle: "软件工具号文章不会写？先套这 4 个结构",
+    wechatTitle: "软件工具文章不会写？先套这 4 个结构",
     sections: ["标题模板", "正文结构", "链接卡片", "分类规则"],
     resources: [
       {
         id: 601,
-        title: "工具号文章结构模板网盘",
+        title: "工具文章结构模板网盘",
         provider: "夸克网盘",
         type: "素材模板",
         size: "46 KB",
@@ -338,8 +336,8 @@ export const resourceTypes: Array<{ type: ResourceType | "全部"; label: string
 
 export const syncPipeline = [
   {
-    title: "抓取公众号文章",
-    text: "录入公众号标题、原文链接、发布时间和摘要，生成站内文章草稿。",
+    title: "录入软件文章",
+    text: "录入文章标题、来源链接、发布时间和摘要，生成站内内容草稿。",
     icon: FileText,
   },
   {
@@ -367,7 +365,7 @@ export const complianceRules = [
   },
   {
     title: "文章与链接分开审核",
-    text: "公众号正文可以先同步为草稿，软件链接和网盘链接经过来源、版权和安全检查后再显示。",
+    text: "文章正文可以先保存为草稿，软件链接和网盘链接经过来源、版权和安全检查后再显示。",
     icon: BadgeCheck,
   },
   {
@@ -378,7 +376,7 @@ export const complianceRules = [
 ];
 
 export const dashboardMetrics = [
-  { label: "同步文章", value: syncedArticles.length.toString() },
+  { label: "软件文章", value: syncedArticles.length.toString() },
   {
     label: "文章分类",
     value: (articleCategories.length - 1).toString(),

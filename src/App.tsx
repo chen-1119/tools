@@ -126,18 +126,18 @@ function App() {
           <span className="brand-mark">TH</span>
           <span>
             <strong>工具雷达</strong>
-            <small>Wechat Sync</small>
+            <small>Tools Library</small>
           </span>
         </a>
         <nav className="main-nav" aria-label="主导航">
-          <a href="#articles">文章库</a>
+          <a href="#articles">内容库</a>
           <a href="#categories">分类</a>
-          <a href="#resources">软件链接</a>
-          <a href="#sync">同步录入</a>
+          <a href="#resources">网盘链接</a>
+          <a href="#sync">提交内容</a>
         </nav>
         <a className="header-action" href="#sync">
           <Send size={16} />
-          同步文章
+          提交内容
         </a>
       </header>
 
@@ -146,23 +146,23 @@ function App() {
           <div className="hero-copy">
             <p className="eyebrow">
               <ClipboardList size={16} />
-              公众号文章 + 软件链接
+              软件文章 + 百度云 / 夸克网盘
             </p>
-            <h1>把公众号文章和软件链接，放到一个可分类检索的网站里。</h1>
+            <h1>把软件教程、文章和网盘链接，整理成一个可检索的工具站。</h1>
             <p className="hero-lede">
-              公众号文章负责讲清用途、教程和使用场景；网站负责沉淀文章、分类检索、软件官网、网盘下载和备用链接。
+              网站负责沉淀软件介绍、教程、模板附件、百度云和夸克网盘链接；各平台只是内容来源，不再让某个平台卡住入口。
             </p>
             <div className="hero-search" role="search">
               <Search size={20} />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="搜索公众号文章、软件名、栏目、网盘链接..."
-                aria-label="搜索公众号文章"
+                placeholder="搜索软件文章、工具名、栏目、百度云/夸克链接..."
+                aria-label="搜索软件文章"
               />
               <a href="#articles">查看文章</a>
             </div>
-            <div className="hero-stats" aria-label="同步数据">
+            <div className="hero-stats" aria-label="站点数据">
               {dashboardMetrics.map((metric) => (
                 <span key={metric.label}>
                   <strong>{metric.value}</strong>
@@ -172,26 +172,26 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-visual sync-console" aria-label="公众号同步工作台">
+          <div className="hero-visual sync-console" aria-label="内容管理工作台">
             <div className="visual-topbar">
               <span />
               <span />
               <span />
-              <strong>同步工作台</strong>
+              <strong>内容工作台</strong>
             </div>
             <div className="sync-console-body">
               <div className="sync-card dark">
-                <span className="panel-label">今日同步</span>
-                <b>公众号文章</b>
+                <span className="panel-label">今日更新</span>
+                <b>软件文章</b>
                 <strong>6 篇</strong>
               </div>
               <div className="sync-card">
                 <span className="panel-label">链接状态</span>
                 <div className="meter"><i style={{ width: "63%" }} /></div>
-                <small>软件官网、网盘、备用链接可分开维护</small>
+                <small>软件官网、百度云、夸克网盘和备用入口可分开维护</small>
               </div>
               <div className="sync-card wide">
-                <span className="panel-label">同步流程</span>
+                <span className="panel-label">发布流程</span>
                 <div className="mini-list">
                   <span>文章</span>
                   <span>分类</span>
@@ -209,8 +209,8 @@ function App() {
               <Filter size={16} />
               文章库
             </p>
-            <h2>按公众号文章来管理内容和软件链接</h2>
-            <p>文章是内容主线，软件链接是行动入口。用户先看说明，再选择官网、网盘或备用链接。</p>
+            <h2>按软件文章来管理教程、附件和网盘链接</h2>
+            <p>文章和教程是内容主线，软件链接是行动入口。用户先看说明，再选择官网、百度云、夸克网盘或备用链接。</p>
           </div>
 
           <div className="filters" aria-label="文章筛选">
@@ -263,7 +263,7 @@ function App() {
                       </span>
                       <h3>{article.title}</h3>
                     </div>
-                    <small className="wechat-line">公众号原文：{article.wechatTitle}</small>
+                    <small className="wechat-line">来源标题：{article.wechatTitle}</small>
                     <p>{article.summary}</p>
                     <div className="article-quick-info" aria-label="文章信息">
                       <span>{article.readTime}</span>
@@ -292,7 +292,7 @@ function App() {
               <p>{selectedArticle.summary}</p>
               <dl>
                 <div>
-                  <dt>公众号标题</dt>
+                  <dt>来源标题</dt>
                   <dd>{selectedArticle.wechatTitle}</dd>
                 </div>
                 <div>
@@ -359,8 +359,8 @@ function App() {
               <Inbox size={16} />
               分类运营
             </p>
-            <h2>先把栏目分清楚，文章同步才不会乱。</h2>
-            <p>这些分类就是网站导航，也可以对应公众号菜单、自动回复关键词和软件链接领取入口。</p>
+            <h2>先把栏目分清楚，文章和网盘链接才不会乱。</h2>
+            <p>这些分类就是网站导航，也可以对应搜索入口、站内专题、自动回复关键词和软件链接领取入口。</p>
           </div>
 
           <div className="category-grid">
@@ -381,7 +381,7 @@ function App() {
               软件链接库
             </p>
             <h2>把分散在文章里的软件链接集中管理。</h2>
-            <p>读者可以从文章进入，也可以直接按软件入口、网盘下载、备用链接等类型查找。</p>
+            <p>读者可以从文章进入，也可以直接按软件入口、百度云、夸克网盘、备用链接等类型查找。</p>
           </div>
 
           <div className="software-grid">
@@ -418,21 +418,21 @@ function App() {
           <div className="section-heading">
             <p className="eyebrow">
               <Send size={16} />
-              同步录入
+              内容录入
             </p>
-            <h2>公众号文章和软件链接一起录。</h2>
-            <p>先录文章，再挂软件链接。官网、网盘、备用链接可以后补，避免文章发布被链接审核卡住。</p>
+            <h2>软件文章和网盘链接一起录。</h2>
+            <p>先录文章或教程，再挂软件链接。官网、百度云、夸克网盘、备用链接可以后补，避免内容发布被链接审核卡住。</p>
           </div>
 
           <div className="sync-layout">
             <form className="submit-form" onSubmit={handleSubmit}>
               <label>
-                公众号文章标题
+                文章标题
                 <input required placeholder="例如：安卓手机这几个日用工具..." />
               </label>
               <label>
-                公众号原文链接
-                <input placeholder="可选，填 mp.weixin.qq.com 原文链接" />
+                来源链接
+                <input placeholder="可选，填论坛、博客、官网、社群文章等来源链接" />
               </label>
               <label>
                 软件名称
@@ -450,7 +450,7 @@ function App() {
               </label>
               <label>
                 软件链接或网盘链接
-                <input placeholder="官网、夸克、百度、阿里云盘、123网盘、备用链接都可填" />
+                <input placeholder="官网、夸克网盘、百度云、备用链接都可填" />
               </label>
               <label>
                 提取码或备注
@@ -462,17 +462,17 @@ function App() {
               </label>
               <button type="submit">
                 <Send size={16} />
-                保存同步草稿
+                保存内容草稿
               </button>
               {submitted && (
                 <p className="form-success">
                   <CheckCircle2 size={16} />
-                  已记录前端草稿状态；接入后台后可写入文章同步队列。
+                  已记录前端草稿状态；接入后台后可写入内容发布队列。
                 </p>
               )}
             </form>
 
-            <div className="workflow-strip sync-steps" aria-label="同步流程">
+            <div className="workflow-strip sync-steps" aria-label="发布流程">
               {syncPipeline.map((stage) => {
                 const Icon = stage.icon;
                 return (
@@ -513,10 +513,10 @@ function App() {
 
       <footer className="site-footer">
         <span>Tools Hub</span>
-        <span>公众号文章同步、分类检索、软件链接和网盘下载。</span>
+        <span>软件文章、分类检索、百度云/夸克网盘链接和下载入口。</span>
         <a href="#sync">
           <Send size={16} />
-          同步文章
+          提交内容
         </a>
         <a href="#compliance">
           <ShieldCheck size={16} />
