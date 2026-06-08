@@ -73,6 +73,14 @@ function App() {
         : syncedArticles.filter((article) => article.category === item.key).length,
   }));
 
+  const softwareLinks = syncedArticles.flatMap((article) =>
+    article.resources.map((resource) => ({
+      ...resource,
+      articleTitle: article.title,
+      articleCategory: article.category,
+    })),
+  );
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitted(true);
@@ -91,7 +99,7 @@ function App() {
         <nav className="main-nav" aria-label="主导航">
           <a href="#articles">文章库</a>
           <a href="#categories">分类</a>
-          <a href="#resources">网盘资料</a>
+          <a href="#resources">软件链接</a>
           <a href="#sync">同步录入</a>
         </nav>
         <a className="header-action" href="#sync">
@@ -105,18 +113,18 @@ function App() {
           <div className="hero-copy">
             <p className="eyebrow">
               <ClipboardList size={16} />
-              公众号文章同步到网站
+              公众号文章 + 软件链接
             </p>
-            <h1>把公众号文章沉淀成网站文章库，资料链接跟着文章走。</h1>
+            <h1>把公众号文章和软件链接，放到一个可分类检索的网站里。</h1>
             <p className="hero-lede">
-              每篇公众号文章同步到站内后，可以按栏目分类、展示摘要、挂载网盘资料、标记审核状态，读者不用翻历史消息。
+              公众号文章负责讲清用途、教程和使用场景；网站负责沉淀文章、分类检索、软件官网、网盘下载和备用链接。
             </p>
             <div className="hero-search" role="search">
               <Search size={20} />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="搜索公众号文章、栏目、标签、网盘资料..."
+                placeholder="搜索公众号文章、软件名、栏目、网盘链接..."
                 aria-label="搜索公众号文章"
               />
               <a href="#articles">查看文章</a>
@@ -145,16 +153,16 @@ function App() {
                 <strong>6 篇</strong>
               </div>
               <div className="sync-card">
-                <span className="panel-label">资料状态</span>
+                <span className="panel-label">链接状态</span>
                 <div className="meter"><i style={{ width: "63%" }} /></div>
-                <small>4 个资料位待补网盘链接</small>
+                <small>软件官网、网盘、备用链接可分开维护</small>
               </div>
               <div className="sync-card wide">
                 <span className="panel-label">同步流程</span>
                 <div className="mini-list">
                   <span>文章</span>
                   <span>分类</span>
-                  <span>网盘</span>
+                  <span>链接</span>
                   <span>审核</span>
                 </div>
               </div>
@@ -168,8 +176,8 @@ function App() {
               <Filter size={16} />
               文章库
             </p>
-            <h2>按公众号文章来管理内容和网盘资料</h2>
-            <p>文章是主线，网盘资料是附属内容。用户先看文章，再按需领取资料。</p>
+            <h2>按公众号文章来管理内容和软件链接</h2>
+            <p>文章是内容主线，软件链接是行动入口。用户先看说明，再选择官网、网盘或备用链接。</p>
           </div>
 
           <div className="filters" aria-label="文章筛选">
@@ -191,7 +199,7 @@ function App() {
               <select
                 value={resourceType}
                 onChange={(event) => setResourceType(event.target.value as ResourceType | "全部")}
-                aria-label="按资料类型筛选"
+                aria-label="按链接类型筛选"
               >
                 {resourceTypes.map((item) => (
                   <option value={item.type} key={item.type}>
@@ -254,7 +262,7 @@ function App() {
                   <dd>{selectedArticle.readTime}</dd>
                 </div>
                 <div>
-                  <dt>资料数量</dt>
+                  <dt>链接数量</dt>
                   <dd>{selectedArticle.resources.length} 个</dd>
                 </div>
               </dl>
@@ -274,7 +282,7 @@ function App() {
               <div className="resource-stack" id="resources">
                 <strong>
                   <LinkIcon size={17} />
-                  网盘资料
+                  软件链接
                 </strong>
                 {selectedArticle.resources.map((resource) => (
                   <article key={resource.id}>
@@ -294,7 +302,7 @@ function App() {
                       </a>
                     ) : (
                       <button type="button" disabled>
-                        待补链
+                        待配置
                       </button>
                     )}
                   </article>
@@ -311,7 +319,7 @@ function App() {
               分类运营
             </p>
             <h2>先把栏目分清楚，文章同步才不会乱。</h2>
-            <p>这些分类就是网站导航，也可以对应公众号菜单、自动回复关键词和资料领取入口。</p>
+            <p>这些分类就是网站导航，也可以对应公众号菜单、自动回复关键词和软件链接领取入口。</p>
           </div>
 
           <div className="category-grid">
@@ -325,14 +333,50 @@ function App() {
           </div>
         </section>
 
+        <section className="section software-section">
+          <div className="section-heading">
+            <p className="eyebrow">
+              <LinkIcon size={16} />
+              软件链接库
+            </p>
+            <h2>把分散在文章里的软件链接集中管理。</h2>
+            <p>读者可以从文章进入，也可以直接按软件入口、网盘下载、备用链接等类型查找。</p>
+          </div>
+
+          <div className="software-grid">
+            {softwareLinks.map((link) => (
+              <article key={`${link.articleTitle}-${link.id}`}>
+                <div className="article-meta">
+                  <span>{link.provider}</span>
+                  <span>{link.type}</span>
+                  <strong>{link.status}</strong>
+                </div>
+                <h3>{link.title}</h3>
+                <p>{link.articleTitle}</p>
+                <small>{link.note}</small>
+                {link.url ? (
+                  <a href={link.url} target="_blank" rel="noreferrer">
+                    打开链接
+                    <ExternalLink size={14} />
+                  </a>
+                ) : (
+                  <button type="button" disabled>
+                    待配置
+                  </button>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="section rewrite-section" id="sync">
           <div className="section-heading">
             <p className="eyebrow">
               <Send size={16} />
               同步录入
             </p>
-            <h2>公众号文章和网盘资料一起录。</h2>
-            <p>先录文章，再挂资料。链接可以后补，避免文章发布被资料审核卡住。</p>
+            <h2>公众号文章和软件链接一起录。</h2>
+            <p>先录文章，再挂软件链接。官网、网盘、备用链接可以后补，避免文章发布被链接审核卡住。</p>
           </div>
 
           <div className="sync-layout">
@@ -346,6 +390,10 @@ function App() {
                 <input placeholder="可选，填 mp.weixin.qq.com 原文链接" />
               </label>
               <label>
+                软件名称
+                <input placeholder="例如：本地 AI 助手 / 安卓截图工具 / 剪辑工具" />
+              </label>
+              <label>
                 文章分类
                 <select defaultValue="ai">
                   {articleCategories.slice(1).map((item) => (
@@ -356,16 +404,16 @@ function App() {
                 </select>
               </label>
               <label>
-                网盘资料链接
-                <input placeholder="可后补：夸克/百度/阿里云盘/123网盘链接" />
+                软件链接或网盘链接
+                <input placeholder="官网、夸克、百度、阿里云盘、123网盘、备用链接都可填" />
               </label>
               <label>
                 提取码或备注
-                <textarea placeholder="说明资料类型、授权来源、是否自制。" rows={4} />
+                <textarea placeholder="说明链接类型、软件版本、授权来源、提取码或备用说明。" rows={4} />
               </label>
               <label className="checkline">
                 <input required type="checkbox" />
-                <span>我确认资料为自有、授权或允许分发内容，不包含破解、侵权或未知来源安装包。</span>
+                <span>我确认软件链接来源清楚，不包含破解、侵权、绕过会员或未知来源安装包。</span>
               </label>
               <button type="submit">
                 <Send size={16} />
@@ -398,10 +446,10 @@ function App() {
           <div className="section-heading">
             <p className="eyebrow">
               <Copyright size={16} />
-              网盘链接边界
+              软件链接边界
             </p>
-            <h2>可以挂网盘，但要让资料跟文章和审核流程绑定。</h2>
-            <p>这样网站不是单纯发资源，而是文章承接、资料领取和分类检索的完整系统。</p>
+            <h2>可以放软件链接和网盘链接，但要跟文章和审核流程绑定。</h2>
+            <p>这样网站不是单纯发资源，而是文章说明、软件入口、网盘下载和分类检索的完整系统。</p>
           </div>
           <div className="compliance-grid">
             {complianceRules.map((rule) => {
@@ -420,7 +468,7 @@ function App() {
 
       <footer className="site-footer">
         <span>Tools Hub</span>
-        <span>公众号文章同步、分类检索、网盘资料领取。</span>
+        <span>公众号文章同步、分类检索、软件链接和网盘下载。</span>
         <a href="#sync">
           <Send size={16} />
           同步文章
