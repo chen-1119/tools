@@ -1,372 +1,305 @@
 import {
   BadgeCheck,
-  BookOpen,
   Bot,
-  ClipboardCheck,
+  Boxes,
+  Brush,
   Code2,
-  DatabaseZap,
+  FileArchive,
   FileText,
-  Image,
-  KeyRound,
-  Layers3,
+  FolderKanban,
   LucideIcon,
-  MailCheck,
   MonitorSmartphone,
+  Newspaper,
   PenTool,
-  Search,
   ShieldCheck,
+  Smartphone,
   Sparkles,
-  Video,
+  TableProperties,
 } from "lucide-react";
 
-export type CategoryKey =
+export type ArticleCategoryKey =
   | "all"
   | "ai"
   | "office"
+  | "android"
   | "media"
   | "dev"
-  | "security"
-  | "mobile";
+  | "templates";
 
-export type PlatformKey = "all" | "windows" | "android" | "web" | "macos" | "linux";
+export type DiskProvider = "夸克网盘" | "百度网盘" | "阿里云盘" | "123网盘" | "待配置";
 
-export type LicenseType = "站内原创" | "授权投稿" | "教程说明" | "清单模板";
+export type ResourceType = "安装包" | "模板" | "教程附件" | "素材包" | "配置文件" | "清单";
 
-export type ToolItem = {
+export type DiskResource = {
+  id: number;
+  title: string;
+  provider: DiskProvider;
+  type: ResourceType;
+  size: string;
+  status: "可领取" | "待补链" | "审核中";
+  url?: string;
+  code?: string;
+  note: string;
+};
+
+export type SyncedArticle = {
   id: number;
   slug: string;
-  name: string;
-  category: Exclude<CategoryKey, "all">;
-  platforms: Exclude<PlatformKey, "all">[];
-  license: LicenseType;
-  source: "自有内容" | "用户投稿" | "编辑整理" | "教程模板";
-  status: "已上架" | "待复核" | "主推";
+  title: string;
+  category: Exclude<ArticleCategoryKey, "all">;
+  source: "公众号同步" | "手动录入" | "草稿";
+  publishDate: string;
+  status: "已同步" | "待补资料" | "草稿";
   summary: string;
-  useCase: string;
   tags: string[];
-  bundle: string[];
-  checklist: string[];
-  complianceNote: string;
+  readTime: string;
+  wechatTitle: string;
+  sections: string[];
+  resources: DiskResource[];
   icon: LucideIcon;
 };
 
-export type RiskRule = {
-  keyword: string;
-  replacement: string;
-  reason: string;
-};
-
-export type WorkflowStage = {
-  title: string;
-  text: string;
-  metric: string;
-};
-
-export const categories: Array<{ key: CategoryKey; label: string; countLabel: string }> = [
-  { key: "all", label: "全部", countLabel: "内容库" },
-  { key: "ai", label: "AI 方案", countLabel: "教程+清单" },
-  { key: "office", label: "办公效率", countLabel: "模板包" },
-  { key: "media", label: "创作工具", countLabel: "流程包" },
-  { key: "dev", label: "开发调试", countLabel: "工作流" },
-  { key: "security", label: "安全隐私", countLabel: "避坑指南" },
-  { key: "mobile", label: "移动效率", countLabel: "手机场景" },
+export const articleCategories: Array<{
+  key: ArticleCategoryKey;
+  label: string;
+  description: string;
+}> = [
+  { key: "all", label: "全部文章", description: "所有公众号同步内容" },
+  { key: "ai", label: "AI 工具", description: "AI 软件、提示词和本地部署" },
+  { key: "office", label: "办公效率", description: "效率软件、文档和协作" },
+  { key: "android", label: "安卓工具", description: "手机工具、App 使用教程" },
+  { key: "media", label: "剪辑设计", description: "图片、视频、封面和素材" },
+  { key: "dev", label: "开发调试", description: "开发者软件和配置教程" },
+  { key: "templates", label: "模板资料", description: "表格、文档、脚本和清单" },
 ];
 
-export const platforms: Array<{ key: PlatformKey; label: string }> = [
-  { key: "all", label: "全部平台" },
-  { key: "windows", label: "Windows" },
-  { key: "android", label: "Android" },
-  { key: "web", label: "Web" },
-  { key: "macos", label: "macOS" },
-  { key: "linux", label: "Linux" },
-];
-
-export const tools: ToolItem[] = [
+export const syncedArticles: SyncedArticle[] = [
   {
     id: 1,
-    slug: "local-ai-assistant",
-    name: "本地 AI 助手搭建包",
+    slug: "ai-local-starter",
+    title: "本地 AI 助手入门：电脑离线也能用的工作流",
     category: "ai",
-    platforms: ["windows", "macos", "linux"],
-    license: "站内原创",
-    source: "编辑整理",
-    status: "主推",
-    summary: "用站内教程、配置清单和排错表，教用户搭建离线 AI 办公助手。",
-    useCase: "适合公众号文章承接：读者进站后看步骤、配置项、常见问题和安全提醒。",
-    tags: ["AI", "离线", "教程包"],
-    bundle: ["入门文章", "配置检查表", "常见报错处理", "风险提示卡"],
-    checklist: ["不提供模型文件", "不承诺第三方服务可用", "只讲本地部署流程"],
-    complianceNote: "站内只提供教程和配置说明，不托管模型、安装包或第三方文件。",
+    source: "公众号同步",
+    publishDate: "2026-06-08",
+    status: "已同步",
+    summary: "从安装准备、模型选择、常见报错到使用场景，把公众号文章同步成可长期更新的站内教程。",
+    tags: ["AI", "本地部署", "新手教程"],
+    readTime: "6 分钟",
+    wechatTitle: "电脑离线 AI 助手怎么搭？这套流程够新手用了",
+    sections: ["准备环境", "配置步骤", "常见报错", "资料领取"],
+    resources: [
+      {
+        id: 101,
+        title: "本地 AI 部署检查清单",
+        provider: "夸克网盘",
+        type: "清单",
+        size: "38 KB",
+        status: "待补链",
+        note: "上传你自己的清单文件后填写网盘链接。",
+      },
+      {
+        id: 102,
+        title: "常见报错排查表",
+        provider: "百度网盘",
+        type: "教程附件",
+        size: "62 KB",
+        status: "待补链",
+        note: "仅适合放自制文档，不放模型文件或破解包。",
+      },
+    ],
     icon: Bot,
   },
   {
     id: 2,
-    slug: "office-template-kit",
-    name: "办公模板效率包",
+    slug: "office-file-kit",
+    title: "办公文件整理工具箱：命名、归档、同步一次讲清",
     category: "office",
-    platforms: ["windows", "android", "web", "macos"],
-    license: "清单模板",
-    source: "自有内容",
-    status: "已上架",
-    summary: "把日报、周报、会议纪要、项目复盘整理成可复制的站内模板。",
-    useCase: "适合做“上班族效率工具箱”文章，站内负责模板更新和使用说明。",
-    tags: ["模板", "文档", "效率"],
-    bundle: ["日报模板", "会议纪要模板", "项目复盘模板", "快捷键清单"],
-    checklist: ["模板文案自有", "不使用第三方品牌素材", "保留更新日期"],
-    complianceNote: "所有模板均为站内原创文本，可直接作为公众号内容延伸。",
-    icon: FileText,
+    source: "公众号同步",
+    publishDate: "2026-06-07",
+    status: "已同步",
+    summary: "把公众号里的办公效率文章拆成步骤、模板和网盘附件，适合读者收藏反复看。",
+    tags: ["办公", "文件整理", "模板"],
+    readTime: "5 分钟",
+    wechatTitle: "文件越存越乱？这套命名和归档方法直接照做",
+    sections: ["命名规则", "文件夹结构", "同步习惯", "模板下载"],
+    resources: [
+      {
+        id: 201,
+        title: "文件命名模板表",
+        provider: "阿里云盘",
+        type: "模板",
+        size: "24 KB",
+        status: "待补链",
+        note: "建议放 Excel/飞书表格导出版。",
+      },
+    ],
+    icon: FolderKanban,
   },
   {
     id: 3,
-    slug: "safe-password-guide",
-    name: "密码安全避坑指南",
-    category: "security",
-    platforms: ["android", "web", "windows", "macos"],
-    license: "教程说明",
-    source: "编辑整理",
-    status: "已上架",
-    summary: "围绕账号安全、密码习惯、二步验证和备份策略做站内科普。",
-    useCase: "适合安全类公众号文章，避免推荐单一外部产品，强调方法论。",
-    tags: ["密码", "安全", "账号保护"],
-    bundle: ["账号风险自查", "二步验证说明", "备份策略", "反钓鱼提醒"],
-    checklist: ["不收集用户账号", "不保存密码", "不引导下载未知客户端"],
-    complianceNote: "内容只做安全教育，不触碰用户隐私和敏感凭据。",
-    icon: KeyRound,
+    slug: "android-daily-tools",
+    title: "安卓日用工具合集：截图、传输、清理和备份",
+    category: "android",
+    source: "公众号同步",
+    publishDate: "2026-06-06",
+    status: "待补资料",
+    summary: "适合软件工具号常见的安卓工具文章，站内按用途分类，并给每个资料位预留网盘链接。",
+    tags: ["安卓", "手机效率", "备份"],
+    readTime: "7 分钟",
+    wechatTitle: "安卓手机这几个日用工具，能省下很多重复操作",
+    sections: ["截图标注", "跨设备传输", "文件清理", "资料领取"],
+    resources: [
+      {
+        id: 301,
+        title: "安卓工具使用说明 PDF",
+        provider: "夸克网盘",
+        type: "教程附件",
+        size: "待上传",
+        status: "审核中",
+        note: "只放使用说明，安装包需确认来源和授权。",
+      },
+    ],
+    icon: Smartphone,
   },
   {
     id: 4,
-    slug: "short-video-workflow",
-    name: "短视频发布流程包",
+    slug: "short-video-assets",
+    title: "短视频封面和字幕工作流：从模板到发布检查",
     category: "media",
-    platforms: ["web", "windows", "android"],
-    license: "站内原创",
-    source: "自有内容",
-    status: "主推",
-    summary: "封面、标题、脚本、字幕、发布检查全部做成站内流程卡。",
-    useCase: "适合视频号、抖音、小红书软件工具号，用流程承接用户收藏。",
-    tags: ["剪辑", "封面", "发布"],
-    bundle: ["脚本模板", "标题公式", "封面检查表", "发布前核对"],
-    checklist: ["素材来源自查", "不提供搬运素材包", "不承诺平台流量"],
-    complianceNote: "站内只提供流程和模板，素材需用户自行确认授权。",
-    icon: Video,
+    source: "公众号同步",
+    publishDate: "2026-06-05",
+    status: "已同步",
+    summary: "把封面尺寸、字幕规范、发布检查做成站内文章，并附带可领取的自制模板。",
+    tags: ["短视频", "封面", "字幕"],
+    readTime: "5 分钟",
+    wechatTitle: "做工具号视频，这套封面和字幕流程可以直接复用",
+    sections: ["封面尺寸", "字幕规范", "发布检查", "模板领取"],
+    resources: [
+      {
+        id: 401,
+        title: "短视频封面尺寸模板",
+        provider: "123网盘",
+        type: "素材包",
+        size: "1.8 MB",
+        status: "待补链",
+        note: "只放自制模板，不放第三方素材包。",
+      },
+    ],
+    icon: Brush,
   },
   {
     id: 5,
-    slug: "image-cleanup-playbook",
-    name: "图片处理工作流",
-    category: "media",
-    platforms: ["web", "windows", "macos"],
-    license: "教程说明",
-    source: "编辑整理",
-    status: "已上架",
-    summary: "整理压缩、裁剪、批量命名、封面尺寸等常用图片处理步骤。",
-    useCase: "适合做“自媒体图片处理流程”专题，用户收藏站内步骤即可复用。",
-    tags: ["图片", "批量处理", "封面"],
-    bundle: ["尺寸表", "命名规则", "压缩流程", "发布检查"],
-    checklist: ["不内置第三方素材", "不上传用户图片", "只做流程说明"],
-    complianceNote: "图片处理说明全部站内维护，不依赖外部工具链接。",
-    icon: Image,
-  },
-  {
-    id: 6,
-    slug: "device-transfer-guide",
-    name: "手机电脑互传指南",
-    category: "mobile",
-    platforms: ["windows", "android", "macos", "linux"],
-    license: "教程说明",
-    source: "自有内容",
-    status: "待复核",
-    summary: "围绕局域网、数据线、蓝牙和云同步写成场景化教程。",
-    useCase: "适合承接“手机电脑互传怎么做”文章，站内给出场景判断和风险提醒。",
-    tags: ["传输", "跨设备", "手机"],
-    bundle: ["场景判断表", "传输方式对比", "隐私提醒", "故障排查"],
-    checklist: ["不代传文件", "不提供网盘资源", "提醒用户备份重要文件"],
-    complianceNote: "只提供操作方法，不托管或中转任何用户文件。",
-    icon: MonitorSmartphone,
-  },
-  {
-    id: 7,
-    slug: "api-debug-workflow",
-    name: "接口调试工作流",
+    slug: "developer-portable-workflow",
+    title: "开发者随身工具包：接口、数据库和配置文件管理",
     category: "dev",
-    platforms: ["windows", "macos", "linux", "web"],
-    license: "清单模板",
-    source: "教程模板",
-    status: "已上架",
-    summary: "把请求调试、环境变量、接口文档、错误记录整理成开发者工作流。",
-    useCase: "适合技术号专题，帮助读者建立稳定的接口调试习惯。",
-    tags: ["API", "调试", "开发者"],
-    bundle: ["请求记录模板", "错误排查表", "环境变量规范", "接口文档结构"],
-    checklist: ["不收集接口密钥", "示例数据脱敏", "不连接用户系统"],
-    complianceNote: "所有示例均为虚拟数据，避免泄露真实接口和密钥。",
+    source: "手动录入",
+    publishDate: "2026-06-04",
+    status: "草稿",
+    summary: "给技术读者准备的文章模板，适合后续同步到公众号再回流到网站。",
+    tags: ["开发者", "接口调试", "配置"],
+    readTime: "8 分钟",
+    wechatTitle: "开发者常用工具怎么整理？先把配置和文档管起来",
+    sections: ["接口集合", "数据库备份", "配置管理", "附件资料"],
+    resources: [
+      {
+        id: 501,
+        title: "接口调试记录模板",
+        provider: "待配置",
+        type: "配置文件",
+        size: "待上传",
+        status: "待补链",
+        note: "接入后台后由管理员填写网盘地址。",
+      },
+    ],
     icon: Code2,
   },
   {
-    id: 8,
-    slug: "database-maintenance-board",
-    name: "数据库维护看板",
-    category: "dev",
-    platforms: ["windows", "macos", "linux"],
-    license: "清单模板",
-    source: "自有内容",
-    status: "待复核",
-    summary: "提供备份、慢查询、权限、容量和变更记录的站内维护清单。",
-    useCase: "适合“个人项目数据库怎么维护”文章，站内用看板化内容承接。",
-    tags: ["数据库", "维护", "清单"],
-    bundle: ["备份检查表", "权限巡检", "容量记录", "变更日志模板"],
-    checklist: ["不连接真实数据库", "不保存连接串", "只提供运维清单"],
-    complianceNote: "站内不接入用户数据库，避免数据安全风险。",
-    icon: DatabaseZap,
-  },
-  {
-    id: 9,
-    slug: "article-rewrite-board",
-    name: "工具号文章改写板",
-    category: "office",
-    platforms: ["web"],
-    license: "站内原创",
-    source: "自有内容",
-    status: "主推",
-    summary: "把选题、标题、正文结构、风险词替换做成文章生产看板。",
-    useCase: "适合你自己的软件工具号，把外部资源表达改成站内教程表达。",
-    tags: ["公众号", "选题", "风控"],
-    bundle: ["标题库", "风险词替换表", "正文结构", "发布检查"],
-    checklist: ["弱化资源下载", "强调教程和模板", "避免破解会员等词"],
-    complianceNote: "帮助内容从资源分发转向自有教程和工具方法论。",
-    icon: ClipboardCheck,
+    id: 6,
+    slug: "wechat-template-library",
+    title: "软件工具号文章模板库：标题、结构和资料卡片",
+    category: "templates",
+    source: "公众号同步",
+    publishDate: "2026-06-03",
+    status: "已同步",
+    summary: "用于承接公众号文章的模板库，包含标题结构、正文模块、资料领取卡片和分类规范。",
+    tags: ["公众号", "模板", "选题"],
+    readTime: "4 分钟",
+    wechatTitle: "软件工具号文章不会写？先套这 4 个结构",
+    sections: ["标题模板", "正文结构", "资料卡片", "分类规则"],
+    resources: [
+      {
+        id: 601,
+        title: "工具号文章结构模板",
+        provider: "夸克网盘",
+        type: "模板",
+        size: "46 KB",
+        status: "待补链",
+        note: "上传自制 Word/Markdown 模板后填写链接。",
+      },
+    ],
+    icon: Newspaper,
   },
 ];
 
-export const articleCampaigns = [
-  {
-    title: "9 个场景化效率工具方案",
-    channel: "公众号承接页",
-    target: "#catalog",
-    description: "不再跳转到别人的网站，用站内卡片承接教程、清单、模板和风险说明。",
-    tags: ["效率", "模板", "站内内容"],
-  },
-  {
-    title: "短视频创作者流程库",
-    channel: "视频号承接页",
-    target: "#submit",
-    description: "剪辑、字幕、封面、标题和发布检查都变成自己的流程内容。",
-    tags: ["剪辑", "封面", "发布"],
-  },
-  {
-    title: "软件工具号风控表达库",
-    channel: "运营专题页",
-    target: "#compliance",
-    description: "把“资源下载”改写成“教程、清单、模板、方法”，降低平台风险。",
-    tags: ["风控", "改写", "运营"],
-  },
+export const resourceTypes: Array<{ type: ResourceType | "全部"; label: string }> = [
+  { type: "全部", label: "全部资料" },
+  { type: "安装包", label: "安装包" },
+  { type: "模板", label: "模板" },
+  { type: "教程附件", label: "教程附件" },
+  { type: "素材包", label: "素材包" },
+  { type: "配置文件", label: "配置文件" },
+  { type: "清单", label: "清单" },
 ];
 
-export const riskRules: RiskRule[] = [
+export const syncPipeline = [
   {
-    keyword: "破解",
-    replacement: "使用教程",
-    reason: "弱化侵权和绕过授权含义，转成方法说明。",
+    title: "抓取公众号文章",
+    text: "录入公众号标题、原文链接、发布时间和摘要，生成站内文章草稿。",
+    icon: FileText,
   },
   {
-    keyword: "网盘",
-    replacement: "站内清单",
-    reason: "避免被识别为资源分发或文件搬运。",
+    title: "选择文章分类",
+    text: "按 AI、办公、安卓、剪辑设计、开发调试、模板资料等栏目归档。",
+    icon: TableProperties,
   },
   {
-    keyword: "下载地址",
-    replacement: "操作步骤",
-    reason: "把用户注意力从拿文件转到学流程。",
+    title: "绑定网盘资料",
+    text: "给文章挂自有或授权资料链接，支持提取码、大小、状态和备注。",
+    icon: FileArchive,
   },
   {
-    keyword: "会员",
-    replacement: "功能对比",
-    reason: "避免暗示绕过付费权益，改成客观说明。",
-  },
-  {
-    keyword: "去广告",
-    replacement: "干净使用体验",
-    reason: "避免绕过平台商业模式的表达。",
-  },
-  {
-    keyword: "永久版",
-    replacement: "长期维护版教程",
-    reason: "降低盗版软件联想，强调内容更新。",
-  },
-  {
-    keyword: "绿色版",
-    replacement: "轻量部署说明",
-    reason: "避免未知安装包和安全风险联想。",
-  },
-];
-
-export const workflowStages: WorkflowStage[] = [
-  {
-    title: "收集需求",
-    text: "从公众号评论、私信和视频弹幕里提炼用户真实问题。",
-    metric: "输入",
-  },
-  {
-    title: "风控改写",
-    text: "把资源词、下载词和绕过词改成教程、模板、清单表达。",
-    metric: "过滤",
-  },
-  {
-    title: "生成专题",
-    text: "每个选题沉淀为站内专题页，包含步骤、检查表和 FAQ。",
-    metric: "沉淀",
-  },
-  {
-    title: "持续更新",
-    text: "按平台反馈更新内容，保留版本日期、风险提示和下架入口。",
-    metric: "运营",
-  },
-];
-
-export const distributionChannels = [
-  {
-    name: "公众号文章",
-    role: "主入口",
-    value: "文章负责种草和引流，站内页面负责持续更新、搜索、收藏和下架。",
-    risk: "标题和正文避免破解、会员、去广告、搬运资源等高风险表达。",
-    icon: MailCheck,
-  },
-  {
-    name: "站内专题页",
-    role: "内容资产",
-    value: "每个专题只沉淀自己的教程、模板、检查表和案例，不依赖外部站点。",
-    risk: "需要定期更新日期、适用平台和风险提示，避免内容过期。",
-    icon: Layers3,
-  },
-  {
-    name: "用户投稿",
-    role: "线索来源",
-    value: "投稿只作为选题线索，编辑审核后改写成站内教程或清单。",
-    risk: "不直接展示投稿者给出的下载地址、网盘地址或未知安装包。",
-    icon: Search,
-  },
-  {
-    name: "短视频评论区",
-    role: "需求收集",
-    value: "把用户提问沉淀成 FAQ 和教程更新点，而不是回复外部下载链接。",
-    risk: "评论区不要发敏感链接，统一引导到站内专题页。",
-    icon: Sparkles,
+    title: "审核后发布",
+    text: "检查版权、链接有效性和资料来源，再把文章展示给读者。",
+    icon: BadgeCheck,
   },
 ];
 
 export const complianceRules = [
   {
-    title: "站内自有内容",
-    text: "默认展示教程、模板、流程和检查表，不把页面做成第三方网站链接集合。",
+    title: "只挂自有或授权资料",
+    text: "网盘位可以存在，但必须用于自制模板、教程附件、授权安装包或公开允许分发的资料。",
     icon: ShieldCheck,
   },
   {
-    title: "投稿先审核",
-    text: "用户提交的是选题线索，编辑审核后再改写成站内内容，不直接上架外部链接。",
+    title: "文章与资料分开审核",
+    text: "公众号正文可以先同步为草稿，网盘链接必须经过来源、版权和安全检查后再显示。",
     icon: BadgeCheck,
   },
   {
-    title: "版权与下架",
-    text: "如内容涉及权利人权益，可通过站内版权入口提交证明，审核后调整或下架。",
+    title: "保留下架入口",
+    text: "如果权利人反馈或链接异常，站内能快速隐藏资料按钮并保留文章主体。",
     icon: PenTool,
+  },
+];
+
+export const dashboardMetrics = [
+  { label: "同步文章", value: syncedArticles.length.toString() },
+  {
+    label: "文章分类",
+    value: (articleCategories.length - 1).toString(),
+  },
+  {
+    label: "资料位",
+    value: syncedArticles.reduce((total, article) => total + article.resources.length, 0).toString(),
   },
 ];
